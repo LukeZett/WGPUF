@@ -8,7 +8,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-void Texture2D::Initialize(uint32_t width, uint32_t height)
+void Texture2D::Init(uint32_t width, uint32_t height)
 {
     SetDefaultDescriptor<2>();
     SetDefaultViewDescriptor<2>();
@@ -34,7 +34,7 @@ void Texture2D::Initialize(uint32_t width, uint32_t height)
     CreateView();
 }
 
-void Texture2D::Initialize(const std::filesystem::path& path)
+void Texture2D::Init(const std::filesystem::path& path)
 {
     int width, height, channels;
     stbi_set_flip_vertically_on_load(1);

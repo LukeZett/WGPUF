@@ -1,6 +1,7 @@
 #include "AppWindow.h"
 #include "AppWindow.h"
 #include "AppWindow.h"
+#include "AppWindow.h"
 
 
 #include "AppWindow.h"
@@ -28,6 +29,7 @@ bool AppWindow::Init(int width, int height, const std::string& name)
 	glfwSetWindowUserPointer(m_window, this);
 	glfwSetFramebufferSizeCallback(m_window, onWindowResize);
 	glfwSetKeyCallback(m_window, onKey);
+	glfwSetDropCallback(m_window, onFileDrop);
 	return true;
 }
 
@@ -96,6 +98,15 @@ void AppWindow::OnKey(int key, int scancode, int action, int mods)
 	else if (m_keyboardHandler != nullptr)
 	{
 		m_keyboardHandler(e);
+	}
+}
+
+void AppWindow::OnFileDrop(int count, const char** paths)
+{
+	FileDropEvent e(count, paths);
+	if (m_fileDropHandler != nullptr)
+	{
+		m_fileDropHandler(e);
 	}
 }
 

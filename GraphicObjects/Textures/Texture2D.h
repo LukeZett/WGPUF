@@ -4,7 +4,6 @@
 #include "Texture.h"
 
 
-
 class Texture2D : public Texture
 {
 public:
@@ -12,7 +11,7 @@ public:
 
 	void Init(uint32_t width, uint32_t height);
 
-	void Init(const std::filesystem::path& path);
+	void Init(const std::filesystem::path & path);
 
 	inline void Write(void* bytes, const glm::vec<2, uint32_t>& offset, const glm::vec<2, uint32_t>& size, size_t pixelSize, uint32_t miplevel = 0);
 };

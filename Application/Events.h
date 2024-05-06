@@ -1,5 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <vector>
+#include <string>
 
 
 struct KeyboardEvent {
@@ -19,6 +21,17 @@ struct ResizeEvent {
 	ResizeEvent() {};
 	ResizeEvent(int w, int h) : width(w), height(h)
 	{}
+};
+
+struct FileDropEvent {
+	std::vector<std::string> filePaths;
+	bool handled = false;
+	FileDropEvent(int count, const char** paths) : filePaths(count) {
+		for (size_t i = 0; i < count; i++)
+		{
+			filePaths[i] = std::string(paths[i]);
+		}
+	}
 };
 
 struct MouseButtonEvent {

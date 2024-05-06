@@ -11,6 +11,7 @@
 
 #define RESIZE_CALLBACK(method, object) (std::function<void(ResizeEvent&)>)std::bind(&method, &object, std::placeholders::_1)
 #define KEYBOARD_CALLBACK(method, object) (std::function<void(KeyboardEvent&)>)std::bind(&method, &object, std::placeholders::_1)
+#define FILEDROP_CALLBACK(method, object) (std::function<void(FileDropEvent&)>)std::bind(&method, &object, std::placeholders::_1)
 
 enum WindowMode
 {
@@ -85,6 +86,8 @@ public:
 
 	inline void SetKeyCallback(std::function<void(KeyboardEvent&)> callback) { m_keyboardHandler = callback; }
 
+	inline void SetFileDropCallback(std::function<void(FileDropEvent&)> callback) { m_fileDropHandler = callback; }
+
 	/**
 	* @brief initialize swap chain
 	*/
@@ -95,6 +98,8 @@ public:
 	void OnResize(int width, int height);
 
 	void OnKey(int key, int scancode, int action, int mods);
+
+	void OnFileDrop(int count, const char** paths);
 
 #pragma endregion
 
@@ -112,6 +117,7 @@ private: // members
 	int m_width = 0;
 	int m_height = 0;
 
+	std::function<void(FileDropEvent&)> m_fileDropHandler = nullptr;
 	std::function<void(ResizeEvent&)> m_resizeHandler = nullptr;
 	std::function<void(KeyboardEvent&)> m_keyboardHandler = nullptr;
 };
@@ -128,6 +134,13 @@ inline void onKey(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	auto app = reinterpret_cast<AppWindow*>(glfwGetWindowUserPointer(window));
 	app->OnKey(key, scancode, action, mods);
+}
+
+inline void onFileDrop(GLFWwindow* window, int count, const char** paths)
+{
+	auto app = reinterpret_cast<AppWindow*>(glfwGetWindowUserPointer(window));
+	app->OnFileDrop(count, paths);
+
 }
 
 
