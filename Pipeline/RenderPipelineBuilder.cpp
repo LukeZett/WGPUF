@@ -2,19 +2,21 @@
 #include "RenderPipelineBuilder.h"
 #include "RenderPipelineBuilder.h"
 
-void RenderPipelineBuilder::AddBufferLayout(BufferLayout& bufferLayout)
+RenderPipelineBuilder& RenderPipelineBuilder::AddBufferLayout(BufferLayout& bufferLayout)
 {
 	m_descriptor.vertex.bufferCount++;
 	m_vbLayouts.push_back({});
 	m_vertexAttribs.push_back(nullptr);
 	bufferLayout.getVertexBufferLayout(m_vbLayouts.back(), m_vertexAttribs.back());
 	m_descriptor.vertex.buffers = &m_vbLayouts[0];
+	return *this;
 }
 
-void RenderPipelineBuilder::SetShader(const std::filesystem::path& path)
+RenderPipelineBuilder& RenderPipelineBuilder::SetShader(const std::filesystem::path& path)
 {
 	customShader = true;
 	m_shaderSource = path;
+	return *this;
 }
 
 RenderPipelineBuilder::RenderPipelineBuilder(WGPUTextureFormat targetFormat)

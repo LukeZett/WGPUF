@@ -17,7 +17,7 @@ void Texture2D::Initialize(uint32_t width, uint32_t height)
 	m_desc.format = WGPUTextureFormat_RGBA8Unorm;
 	m_desc.usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst;
 
-    Init(width, height, 1);
+    i_Init(width, height, 1);
 
     std::vector<uint8_t> pixels(4 * m_desc.size.width * m_desc.size.height);
     for (uint32_t i = 0; i < m_desc.size.width; i += 2) {
@@ -30,7 +30,7 @@ void Texture2D::Initialize(uint32_t width, uint32_t height)
         }
     }
 
-    Write(&pixels[0], { 0,0,0 }, { width, height, 1 }, 4, 0);
+    i_Write(&pixels[0], { 0,0,0 }, { width, height, 1 }, 4, 0);
     CreateView();
 }
 
@@ -46,9 +46,9 @@ void Texture2D::Initialize(const std::filesystem::path& path)
     m_desc.format = WGPUTextureFormat_RGBA8Unorm;
     m_desc.usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst;
 
-    Init(width, height, 1);
+    i_Init(width, height, 1);
 
-    Write(data, { 0,0,0 }, { width, height, 1 }, channels);
+    i_Write(data, { 0,0,0 }, { width, height, 1 }, channels);
 
     CreateView();
     stbi_image_free(data);

@@ -24,14 +24,14 @@ public:
 		SetDescPtrs();
 	}
 
-	void AddBufferLayout(BufferLayout& BufferLayout);
+	RenderPipelineBuilder& AddBufferLayout(BufferLayout& BufferLayout);
 
-	void SetShader(const std::filesystem::path& path);
+	RenderPipelineBuilder& SetShader(const std::filesystem::path& path);
 
 	template<typename T>
-	void AddUniformBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility);
+	RenderPipelineBuilder& AddUniformBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility);
 
-	void AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility);
+	RenderPipelineBuilder& AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility);
 
 	~RenderPipelineBuilder();
 
@@ -65,7 +65,7 @@ private:
 
 
 template<typename T>
-inline void RenderPipelineBuilder::AddUniformBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility)
+inline RenderPipelineBuilder& RenderPipelineBuilder::AddUniformBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility)
 {
 	m_bindingEntries.push_back({});
 	m_bindingsGroups.push_back(group);
@@ -75,9 +75,10 @@ inline void RenderPipelineBuilder::AddUniformBinding(uint16_t group, uint16_t bi
 	bindingEntry.visibility = visibility;
 	bindingEntry.buffer.type = WGPUBufferBindingType_Uniform;
 	bindingEntry.buffer.minBindingSize = sizeof(T);
+	return *this;
 }
 
-inline void RenderPipelineBuilder::AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility)
+inline RenderPipelineBuilder& RenderPipelineBuilder::AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility)
 {
 	m_bindingEntries.push_back({});
 	m_bindingsGroups.push_back(group);
@@ -87,6 +88,7 @@ inline void RenderPipelineBuilder::AddTextureBinding(uint16_t group, uint16_t bi
 	bindingEntry.visibility = visibility;
 	bindingEntry.texture.sampleType = WGPUTextureSampleType_Float;
 	bindingEntry.texture.viewDimension = WGPUTextureViewDimension_2D;
+	return *this;
 }
 
 inline RenderPipelineBuilder::~RenderPipelineBuilder()

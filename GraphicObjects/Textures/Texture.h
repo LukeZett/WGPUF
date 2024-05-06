@@ -129,8 +129,8 @@ inline void Texture::i_Write(void* bytes, const glm::vec<3, uint32_t>& offset, c
 	WGPUTextureDataLayout source = {};
 
 	source.offset = 0;
-	source.bytesPerRow = pixelSize * m_desc.size.width;
-	source.rowsPerImage = m_desc.size.height;
+	source.bytesPerRow = pixelSize * size.x;
+	source.rowsPerImage = size.y;
 
 	wgpuQueueWriteTexture(Device::GetQueue(), &destination, bytes, size.x * size.y * size.z * pixelSize, &source, &m_desc.size);
 }
