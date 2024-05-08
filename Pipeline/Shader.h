@@ -16,6 +16,12 @@ public:
 		other.m_shaderModule = nullptr;
 	}
 
+	inline Shader& operator=(Shader&& other) noexcept {
+		this->m_shaderModule = other.m_shaderModule;
+		other.m_shaderModule = nullptr;
+		return *this;
+	}
+
 	inline const WGPUShaderModule Get() const { return m_shaderModule; };
 private:
 	Shader(const Shader&) = delete;

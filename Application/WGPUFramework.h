@@ -8,6 +8,7 @@
 #include "Device.h"
 #include "RenderPipelineBuilder.h"
 #include "Textures/Texture2D.h"
+#include "Textures/Texture3D.h"
 
 
 
@@ -19,7 +20,7 @@ public:
 		return s_instance.i_Init(headless);
 	}
 
-	static bool CreateWindow(const std::string& name, uint32_t width = 720, uint32_t height = 480) {
+	static bool CreateAppWindow(const std::string& name, uint32_t width = 720, uint32_t height = 480) {
 		return s_instance.i_CreateWindow(name, width, height);
 	}
 

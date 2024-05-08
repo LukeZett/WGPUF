@@ -12,15 +12,29 @@ class RenderPipeline
 		m_shadermodule(shaderSource) {
 	};
 
-	RenderPipeline() {
-	}
 
+public:
 	RenderPipeline(RenderPipeline&& other) noexcept : m_shadermodule(std::move(other.m_shadermodule)),
 		m_pipeline(std::move(other.m_pipeline)) {
+		m_layout = other.m_layout;
+		m_bindEntryCount = other.m_bindEntryCount;
+		other.m_pipeline = nullptr;
 	}
+
+	inline RenderPipeline& operator =(RenderPipeline && other){
+		if (this != &other) {
+			m_pipeline = std::move(other.m_pipeline);
+			m_shadermodule = std::move(other.m_shadermodule);
+			m_layout = other.m_layout;
+			m_bindEntryCount = other.m_bindEntryCount;
+			other.m_pipeline = nullptr;
+		}
+		return *this;
+	}
+
 private:
 	uint16_t m_bindEntryCount = 0;
-	WGPUBindGroupLayout m_layout = {};
+	WGPUBindGroupLayout m_layout = nullptr;
 
 	void Init(WGPURenderPipelineDescriptor& descriptor);
 
@@ -28,6 +42,9 @@ private:
 	Shader m_shadermodule;
 
 public:
+	RenderPipeline() {
+	}
+
 	WGPUBindGroupLayout GetBindGroupLayout(uint16_t group) const {
 		return m_layout;
 	}
@@ -43,6 +60,7 @@ public:
 	~RenderPipeline() {
 		if (m_pipeline == nullptr) return;
 		wgpuRenderPipelineRelease(m_pipeline);
+		if (m_layout == nullptr) return;
 		wgpuBindGroupLayoutRelease(m_layout);
 	}
 };
