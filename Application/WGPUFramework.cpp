@@ -82,7 +82,6 @@ void WGPUFramework::i_FinishScreenPass()
 	wgpuCommandBufferRelease(command);
 
 	m_window.PresentFrame();
-	m_window.PollEvents();
 }
 
 bool WGPUFramework::InitAdapterDevice(const WGPUSurface& surface)

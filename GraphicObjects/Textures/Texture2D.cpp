@@ -40,6 +40,7 @@ void Texture2D::Init(const std::filesystem::path& path)
     stbi_set_flip_vertically_on_load(1);
     char* data = (char*)stbi_load(((path).generic_string()).data(), &width, &height, &channels, 4);
 
+    channels = 4;
     SetDefaultDescriptor<2>();
     SetDefaultViewDescriptor<2>();
 
