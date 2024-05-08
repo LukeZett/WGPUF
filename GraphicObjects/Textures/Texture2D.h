@@ -7,7 +7,10 @@
 class Texture2D : public Texture
 {
 public:
-	Texture2D() {};
+	Texture2D() {
+		SetDefaultDescriptor<2>();
+		SetDefaultViewDescriptor<2>();
+	};
 
 	void Init(uint32_t width, uint32_t height);
 

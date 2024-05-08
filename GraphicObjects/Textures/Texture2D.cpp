@@ -10,13 +10,6 @@
 
 void Texture2D::Init(uint32_t width, uint32_t height)
 {
-    SetDefaultDescriptor<2>();
-    SetDefaultViewDescriptor<2>();
-
-    m_desc.mipLevelCount = 1;
-	m_desc.format = WGPUTextureFormat_RGBA8Unorm;
-	m_desc.usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst;
-
     i_Init(width, height, 1);
 
     std::vector<uint8_t> pixels(4 * m_desc.size.width * m_desc.size.height);
@@ -43,9 +36,6 @@ void Texture2D::Init(const std::filesystem::path& path)
     channels = 4;
     SetDefaultDescriptor<2>();
     SetDefaultViewDescriptor<2>();
-
-    m_desc.format = WGPUTextureFormat_RGBA8Unorm;
-    m_desc.usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst;
 
     i_Init(width, height, 1);
 
