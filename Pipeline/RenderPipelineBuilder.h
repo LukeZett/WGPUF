@@ -31,7 +31,7 @@ public:
 	template<typename T>
 	RenderPipelineBuilder& AddUniformBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility);
 
-	RenderPipelineBuilder& AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility);
+	RenderPipelineBuilder& AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility, WGPUTextureViewDimension dimension = WGPUTextureViewDimension_2D);
 
 	~RenderPipelineBuilder();
 
@@ -78,7 +78,7 @@ inline RenderPipelineBuilder& RenderPipelineBuilder::AddUniformBinding(uint16_t 
 	return *this;
 }
 
-inline RenderPipelineBuilder& RenderPipelineBuilder::AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility)
+inline RenderPipelineBuilder& RenderPipelineBuilder::AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility, WGPUTextureViewDimension dimension)
 {
 	m_bindingEntries.push_back({});
 	m_bindingsGroups.push_back(group);
@@ -87,7 +87,7 @@ inline RenderPipelineBuilder& RenderPipelineBuilder::AddTextureBinding(uint16_t 
 	bindingEntry.binding = binding;
 	bindingEntry.visibility = visibility;
 	bindingEntry.texture.sampleType = WGPUTextureSampleType_Float;
-	bindingEntry.texture.viewDimension = WGPUTextureViewDimension_2D;
+	bindingEntry.texture.viewDimension = dimension;
 	return *this;
 }
 

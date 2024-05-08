@@ -23,9 +23,9 @@ public:
 
 	WGPUTexture GetTexture() const { return m_texture; }
 
-	WGPUTextureDescriptor GetDescriptor() const { return m_desc; }
+	WGPUTextureDescriptor& GetDescriptor() { return m_desc; }
 
-	WGPUTextureViewDescriptor GetViewDesc() const { return m_viewDesc; }
+	WGPUTextureViewDescriptor& GetViewDesc() { return m_viewDesc; }
 
 	inline void Delete();
 
@@ -96,6 +96,10 @@ Texture::Texture()
 {
 	m_desc.nextInChain = nullptr;
 	m_viewDesc.nextInChain = nullptr;
+
+	m_desc.mipLevelCount = 1;
+	m_desc.format = WGPUTextureFormat_RGBA8Unorm;
+	m_desc.usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst;
 };
 
 void Texture::i_Init(uint32_t width, uint32_t height, uint32_t depth) {
