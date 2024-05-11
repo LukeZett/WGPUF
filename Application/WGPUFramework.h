@@ -41,7 +41,7 @@ public:
 	}
 
 	static RenderPipelineBuilder CreateRenderPipelineBuilder() {
-		return RenderPipelineBuilder(s_instance.m_window.GetTextureFormat());
+		return RenderPipelineBuilder(s_instance.m_window.GetTextureFormat(), s_instance.m_window);
 	}
 
 

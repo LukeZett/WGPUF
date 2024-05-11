@@ -58,7 +58,27 @@ WGPURenderPassEncoder WGPUFramework::i_BeginScreenPass()
 	renderPassDesc.colorAttachmentCount = 1;
 	renderPassDesc.colorAttachments = &renderPassColorAttachment;
 
-	renderPassDesc.depthStencilAttachment = nullptr;
+	if (m_window.GetDepthView() != nullptr)
+	{
+		WGPURenderPassDepthStencilAttachment depthStencilAttachment;
+		depthStencilAttachment.view = m_window.GetDepthView();
+		depthStencilAttachment.depthClearValue = 1.0f;
+		depthStencilAttachment.depthLoadOp = WGPULoadOp_Clear;
+		depthStencilAttachment.depthStoreOp = WGPUStoreOp_Store;
+		depthStencilAttachment.depthReadOnly = false;
+
+		depthStencilAttachment.stencilClearValue = 0;
+		depthStencilAttachment.stencilLoadOp = WGPULoadOp_Clear;
+		depthStencilAttachment.stencilStoreOp = WGPUStoreOp_Store;
+		depthStencilAttachment.stencilReadOnly = true;
+
+		renderPassDesc.depthStencilAttachment = &depthStencilAttachment;
+	}
+	else
+	{
+		renderPassDesc.depthStencilAttachment = nullptr;
+	}
+	
 	renderPassDesc.timestampWriteCount = 0;
 	renderPassDesc.timestampWrites = nullptr;
 	renderPassDesc.nextInChain = nullptr;

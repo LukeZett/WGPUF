@@ -20,6 +20,13 @@ enum WindowMode
 	Windowed
 };
 
+enum DepthTexFormat {
+	Depth24Plus = WGPUTextureFormat_Depth24Plus,
+	Depth24Stencil8 = WGPUTextureFormat_Depth24PlusStencil8,
+	Depth32 = WGPUTextureFormat_Depth32Float,
+	Depth16UNorm = WGPUTextureFormat_Depth16Unorm,
+	Depth32Stencil8 = WGPUTextureFormat_Depth32FloatStencil8
+};
 
 enum CursorMode
 {
@@ -45,6 +52,12 @@ public:
 
 	void SetCursorMode(CursorMode mode);
 
+	void UseDepth(DepthTexFormat format = Depth24Plus);
+	
+	DepthTexFormat GetDepthFormat() const { return static_cast<DepthTexFormat>(m_depthTexDesc.format); };
+
+	WGPUTextureView GetDepthView() const { return m_depthTexView; }
+
 	/**
 	* @brief returns window's close flag
 	*/
@@ -61,7 +74,7 @@ public:
 	*/
 	inline void InitSurface(WGPUInstance instance) { m_surface = glfwGetWGPUSurface(instance, m_window); }
 
-	inline WGPUSurface GetSurface() { return m_surface; }
+	inline WGPUSurface GetSurface() const { return m_surface; }
 
 	/**
 	* @brief Fetch texture view from swap chain 
@@ -116,6 +129,11 @@ private: // members
 	WGPUSwapChain m_swapChain = nullptr;
 	int m_width = 0;
 	int m_height = 0;
+
+	WGPUTextureDescriptor m_depthTexDesc = {};
+	WGPUTexture m_depthTexture = nullptr;
+	WGPUTextureViewDescriptor m_depthTexViewDesc = {};
+	WGPUTextureView m_depthTexView = nullptr;
 
 	std::function<void(FileDropEvent&)> m_fileDropHandler = nullptr;
 	std::function<void(ResizeEvent&)> m_resizeHandler = nullptr;

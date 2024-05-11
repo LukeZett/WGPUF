@@ -4,8 +4,13 @@
 #include "Device.h"
 #include "Shader.h"
 #include "Buffer.h"
+#include "AppWindow.h"
 
 class WGPUFramework;
+
+void setDefault(WGPUStencilFaceState& stencilFaceState);
+void setDefault(WGPUDepthStencilState& depthStencilState);
+
 
 enum ShaderVisibility {
 	VertexShader = WGPUShaderStage_Vertex,
@@ -20,7 +25,7 @@ class RenderPipelineBuilder
 public:
 	RenderPipeline Build();
 
-	RenderPipelineBuilder(const RenderPipelineBuilder& other) {
+	RenderPipelineBuilder(const RenderPipelineBuilder& other) : m_window(other.m_window) {
 		SetDescPtrs();
 	}
 
@@ -33,6 +38,8 @@ public:
 
 	RenderPipelineBuilder& AddTextureBinding(uint16_t group, uint16_t binding, ShaderVisibility visibility, WGPUTextureViewDimension dimension = WGPUTextureViewDimension_2D);
 
+	RenderPipelineBuilder& SetDepthState(WGPUCompareFunction comparator, bool depthWrite);
+
 	~RenderPipelineBuilder();
 
 private:
@@ -40,9 +47,10 @@ private:
 		m_descriptor.fragment = &m_fragmentState;
 		m_fragmentState.targets = &m_colorTargetState;
 		m_colorTargetState.blend = &m_blendState;
+		if (m_descriptor.depthStencil) m_descriptor.depthStencil = &m_depthStencilState;
 	}
 
-	RenderPipelineBuilder(WGPUTextureFormat targetFormat);
+	RenderPipelineBuilder(WGPUTextureFormat targetFormat, AppWindow& window);
 
 
 private:
@@ -51,7 +59,9 @@ private:
 	WGPURenderPipelineDescriptor m_descriptor = {};
 	WGPUFragmentState m_fragmentState = {};
 	WGPUBlendState m_blendState = {};
+	WGPUDepthStencilState m_depthStencilState = {};
 	WGPUColorTargetState m_colorTargetState = {};
+	AppWindow& m_window;
 	std::filesystem::path m_shaderSource;
 	bool customShader = false;
 
@@ -91,9 +101,43 @@ inline RenderPipelineBuilder& RenderPipelineBuilder::AddTextureBinding(uint16_t 
 	return *this;
 }
 
+inline RenderPipelineBuilder& RenderPipelineBuilder::SetDepthState(WGPUCompareFunction comparator, bool depthWrite)
+{
+	setDefault(m_depthStencilState);
+
+	m_depthStencilState.depthCompare = comparator;
+	m_depthStencilState.depthWriteEnabled = depthWrite;
+	m_depthStencilState.format = static_cast<WGPUTextureFormat>(m_window.GetDepthFormat());
+	m_depthStencilState.stencilReadMask = 0;
+	m_depthStencilState.stencilWriteMask = 0;
+	m_descriptor.depthStencil = &m_depthStencilState;
+	return *this;
+}
+
 inline RenderPipelineBuilder::~RenderPipelineBuilder()
 {
 	for (auto& ptr : m_vertexAttribs) {
 		delete ptr;
 	}
+}
+
+
+inline void setDefault(WGPUStencilFaceState& stencilFaceState) {
+	stencilFaceState.compare = WGPUCompareFunction_Always;
+	stencilFaceState.failOp = WGPUStencilOperation_Keep;
+	stencilFaceState.depthFailOp = WGPUStencilOperation_Keep;
+	stencilFaceState.passOp = WGPUStencilOperation_Keep;
+}
+
+inline void setDefault(WGPUDepthStencilState& depthStencilState) {
+	depthStencilState.format = WGPUTextureFormat_Undefined;
+	depthStencilState.depthWriteEnabled = false;
+	depthStencilState.depthCompare = WGPUCompareFunction_Always;
+	depthStencilState.stencilReadMask = 0xFFFFFFFF;
+	depthStencilState.stencilWriteMask = 0xFFFFFFFF;
+	depthStencilState.depthBias = 0;
+	depthStencilState.depthBiasSlopeScale = 0;
+	depthStencilState.depthBiasClamp = 0;
+	setDefault(depthStencilState.stencilFront);
+	setDefault(depthStencilState.stencilBack);
 }

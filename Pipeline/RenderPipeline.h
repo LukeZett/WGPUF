@@ -21,7 +21,7 @@ public:
 		other.m_pipeline = nullptr;
 	}
 
-	inline RenderPipeline& operator =(RenderPipeline && other){
+	inline RenderPipeline& operator =(RenderPipeline && other) noexcept {
 		if (this != &other) {
 			m_pipeline = std::move(other.m_pipeline);
 			m_shadermodule = std::move(other.m_shadermodule);

@@ -2,6 +2,7 @@
 #include "AppWindow.h"
 #include "AppWindow.h"
 #include "AppWindow.h"
+#include "AppWindow.h"
 
 
 #include "AppWindow.h"
@@ -71,6 +72,29 @@ void AppWindow::SetCursorMode(CursorMode mode)
 	}
 }
 
+void AppWindow::UseDepth(DepthTexFormat format)
+{
+	WGPUTextureFormat f = static_cast<WGPUTextureFormat>(format);
+	m_depthTexDesc.dimension = WGPUTextureDimension_2D;
+	m_depthTexDesc.format = f;
+	m_depthTexDesc.mipLevelCount = 1;
+	m_depthTexDesc.sampleCount = 1;
+	m_depthTexDesc.size = { (uint32_t)m_width, (uint32_t)m_height, 1 };
+	m_depthTexDesc.usage = WGPUTextureUsage_RenderAttachment;
+	m_depthTexDesc.viewFormatCount = 1;
+	m_depthTexDesc.viewFormats = &m_depthTexDesc.format;
+	m_depthTexture = wgpuDeviceCreateTexture(Device::Get(), &m_depthTexDesc);
+
+	m_depthTexViewDesc.aspect = WGPUTextureAspect_DepthOnly;
+	m_depthTexViewDesc.baseArrayLayer = 0;
+	m_depthTexViewDesc.arrayLayerCount = 1;
+	m_depthTexViewDesc.baseMipLevel = 0;
+	m_depthTexViewDesc.mipLevelCount = 1;
+	m_depthTexViewDesc.dimension = WGPUTextureViewDimension_2D;
+	m_depthTexViewDesc.format = f;
+	m_depthTexView = wgpuTextureCreateView(m_depthTexture, &m_depthTexViewDesc);
+}
+
 void AppWindow::InitSwapChain()
 {
 	CreateSwapChain();
@@ -82,6 +106,17 @@ void AppWindow::OnResize(int width, int height)
 	m_height = height;
 	CreateSwapChain();
 	ResizeEvent e(width, height);
+
+	if (m_depthTexture != nullptr)
+	{
+		wgpuTextureViewRelease(m_depthTexView);
+		wgpuTextureDestroy(m_depthTexture);
+		wgpuTextureRelease(m_depthTexture);
+		m_depthTexDesc.size = { (uint32_t)m_width, (uint32_t)m_height, 1 };
+		m_depthTexture = wgpuDeviceCreateTexture(Device::Get(), &m_depthTexDesc);
+		m_depthTexView = wgpuTextureCreateView(m_depthTexture, &m_depthTexViewDesc);
+	}
+
 	if (m_resizeHandler != nullptr)
 	{
 		m_resizeHandler(e);
@@ -112,6 +147,11 @@ void AppWindow::OnFileDrop(int count, const char** paths)
 
 AppWindow::~AppWindow()
 {
+	if (m_depthTexture) {
+		wgpuTextureViewRelease(m_depthTexView);
+		wgpuTextureDestroy(m_depthTexture);
+		wgpuTextureRelease(m_depthTexture);
+	}
 	if (m_surface) wgpuSurfaceRelease(m_surface);
 	if (m_swapChain) wgpuSwapChainRelease(m_swapChain);
 	if (m_window) glfwDestroyWindow(m_window);

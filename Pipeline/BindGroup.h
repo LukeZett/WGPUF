@@ -10,6 +10,7 @@ class BindGroup
 {
 public:
 	BindGroup();
+
 	~BindGroup();
 
 	WGPUBindGroup& Init(WGPUBindGroupLayout layout);

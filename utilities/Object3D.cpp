@@ -6,7 +6,7 @@
 #include <unordered_set>
 
 
-Object3D::Object3D(std::filesystem::path objFile) : m_indexBuffer(0, Index), m_vertexBuffer(0, Vertex)
+Object3D::Object3D(std::filesystem::path objFile)
 {
     std::string inputfile = objFile.generic_string();
     tinyobj::ObjReaderConfig reader_config;
@@ -66,13 +66,8 @@ Object3D::Object3D(std::filesystem::path objFile) : m_indexBuffer(0, Index), m_v
                 m_vertices.push_back(vertex);
                 m_indices.push_back(i);
                 i++;
-
             }
+            index_offset += fv;
         }
     }
-
-    m_indexBuffer.Allocate(sizeof(uint16_t) * m_indices.size());
-    m_indexBuffer.Upload(m_indices);
-    m_vertexBuffer.Allocate(sizeof(Vertex) * m_vertices.size());
-    m_vertexBuffer.Upload(m_vertices);
 }

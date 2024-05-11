@@ -26,9 +26,5 @@ public:
 		return glm::perspective(m_fov, WGF::Window().GetAspectRatio(), m_zNear, m_zFar);
 	}
 
-
 	~Camera() = default;
-
-private:
-
 };

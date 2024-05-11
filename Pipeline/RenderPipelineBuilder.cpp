@@ -19,7 +19,7 @@ RenderPipelineBuilder& RenderPipelineBuilder::SetShader(const std::filesystem::p
 	return *this;
 }
 
-RenderPipelineBuilder::RenderPipelineBuilder(WGPUTextureFormat targetFormat)
+RenderPipelineBuilder::RenderPipelineBuilder(WGPUTextureFormat targetFormat, AppWindow& window) : m_window(window)
 {
 	m_descriptor.nextInChain = nullptr;
 	
