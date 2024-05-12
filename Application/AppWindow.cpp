@@ -3,6 +3,8 @@
 #include "AppWindow.h"
 #include "AppWindow.h"
 #include "AppWindow.h"
+#include "AppWindow.h"
+#include "AppWindow.h"
 
 
 #include "AppWindow.h"
@@ -31,6 +33,8 @@ bool AppWindow::Init(int width, int height, const std::string& name)
 	glfwSetFramebufferSizeCallback(m_window, onWindowResize);
 	glfwSetKeyCallback(m_window, onKey);
 	glfwSetDropCallback(m_window, onFileDrop);
+	glfwSetMouseButtonCallback(m_window, onMouseClick);
+	glfwSetCursorPosCallback(m_window, onMouseMove);
 	return true;
 }
 
@@ -142,6 +146,27 @@ void AppWindow::OnFileDrop(int count, const char** paths)
 	if (m_fileDropHandler != nullptr)
 	{
 		m_fileDropHandler(e);
+	}
+}
+
+void AppWindow::OnMouseMove(double xpos, double ypos)
+{
+	if (m_mouseMoveHandler)
+	{
+		auto e = MouseMoveFactory::CreateMouseMove({ xpos, ypos });
+		m_mouseMoveHandler(e);
+	}
+}
+
+void AppWindow::OnMouseClick(int key, int action, int mods)
+{
+	if (m_mouseClickHandler) {
+		MouseButtonEvent e;
+		e.action = action;
+		e.button = key;
+		e.mods = mods;
+		glfwGetCursorPos(m_window, &e.mousePos.x, &e.mousePos.y);
+		m_mouseClickHandler(e);
 	}
 }
 

@@ -12,6 +12,8 @@
 #define RESIZE_CALLBACK(method, object) (std::function<void(ResizeEvent&)>)std::bind(&method, &object, std::placeholders::_1)
 #define KEYBOARD_CALLBACK(method, object) (std::function<void(KeyboardEvent&)>)std::bind(&method, &object, std::placeholders::_1)
 #define FILEDROP_CALLBACK(method, object) (std::function<void(FileDropEvent&)>)std::bind(&method, &object, std::placeholders::_1)
+#define MOUSEMOVE_CALLBACK(method, object) (std::function<void(MouseMoveEvent&)>)std::bind(&method, &object, std::placeholders::_1)
+#define MOUSEBUTTON_CALLBACK(method, object) (std::function<void(MouseButtonEvent&)>)std::bind(&method, &object, std::placeholders::_1)
 
 enum WindowMode
 {
@@ -101,6 +103,10 @@ public:
 
 	inline void SetFileDropCallback(std::function<void(FileDropEvent&)> callback) { m_fileDropHandler = callback; }
 
+	inline void SetMouseMoveCallback(std::function<void(MouseMoveEvent&)> callback) { m_mouseMoveHandler = callback; }
+
+	inline void SetMouseClickCallback(std::function<void(MouseButtonEvent&)> callback) { m_mouseClickHandler = callback; }
+
 	/**
 	* @brief initialize swap chain
 	*/
@@ -113,6 +119,10 @@ public:
 	void OnKey(int key, int scancode, int action, int mods);
 
 	void OnFileDrop(int count, const char** paths);
+
+	void OnMouseMove(double xpos, double ypos);
+
+	void OnMouseClick(int key, int action, int mods);
 
 #pragma endregion
 
@@ -138,6 +148,8 @@ private: // members
 	std::function<void(FileDropEvent&)> m_fileDropHandler = nullptr;
 	std::function<void(ResizeEvent&)> m_resizeHandler = nullptr;
 	std::function<void(KeyboardEvent&)> m_keyboardHandler = nullptr;
+	std::function<void(MouseButtonEvent&)> m_mouseClickHandler = nullptr;
+	std::function<void(MouseMoveEvent&)> m_mouseMoveHandler = nullptr;
 };
 
 //helper callbacks for GLFW
@@ -158,7 +170,18 @@ inline void onFileDrop(GLFWwindow* window, int count, const char** paths)
 {
 	auto app = reinterpret_cast<AppWindow*>(glfwGetWindowUserPointer(window));
 	app->OnFileDrop(count, paths);
+}
 
+inline void onMouseMove(GLFWwindow* window, double xpos, double ypos)
+{
+	auto app = reinterpret_cast<AppWindow*>(glfwGetWindowUserPointer(window));
+	app->OnMouseMove(xpos, ypos);
+}
+
+inline void onMouseClick(GLFWwindow* window, int button, int action, int mods)
+{
+	auto app = reinterpret_cast<AppWindow*>(glfwGetWindowUserPointer(window));
+	app->OnMouseClick(button, action, mods);
 }
 
 

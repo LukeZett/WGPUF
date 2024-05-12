@@ -33,7 +33,13 @@ add_library(WGPUframework
     "Mixins/Movable.h"
     "utilities/Object3D.h"
     "utilities/Object3D.cpp"
- "GraphicObjects/Textures/Texture.h" "GraphicObjects/Textures/Texture3D.h" "Pipeline/BindGroup.h")
+    "GraphicObjects/Textures/Texture.h"
+    "GraphicObjects/Textures/Texture3D.h"
+    "Pipeline/BindGroup.h"
+    "Cameras/Camera.h"
+    "Cameras/TurnTableCamera.h"
+    
+)
 
 target_include_directories(WGPUframework PUBLIC utilities)
 target_include_directories(WGPUframework PUBLIC Application)

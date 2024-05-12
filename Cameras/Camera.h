@@ -13,7 +13,7 @@ protected:
 	float m_zFar;
 	float m_fov;
 public:
-	Camera(const glm::vec3& lookAt, const glm::vec3 position, float foV, float nearPlane = 0.1, float farPlane = 100) :
+	Camera(const glm::vec3& lookAt, const glm::vec3& position, float foV, float nearPlane = 0.1, float farPlane = 100) :
 		m_focusPoint(lookAt), m_position(position), m_fov(foV), m_zNear(nearPlane), m_zFar(farPlane)
 	{
 	}
