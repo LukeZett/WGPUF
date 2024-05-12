@@ -28,6 +28,12 @@ public:
 		Camera(lookAt, position, foV, nearPlane, farPlane),
 		m_radius(glm::distance(lookAt, position)) {}
 
+	void Turn(float x, float y);
+
+	void MoveOrigin(const glm::vec2& movement);
+
+	void Zoom(float delta);
+
 	void OnMouseClick(MouseButtonEvent& e);
 
 	void OnMouseMove(MouseMoveEvent& e);
@@ -40,6 +46,29 @@ public:
 
 	void SetZoomingMouseButton(Key button) { m_zoomingButton = button; };
 };
+
+inline void TurnTableCamera::Turn(float x, float y)
+{
+	auto p = glm::rotate(m_identity, x, m_upVector);
+	p = glm::rotate(p, y, glm::normalize(glm::cross(m_position - m_focusPoint, m_upVector)));
+	m_position = m_focusPoint + p * (m_position - m_focusPoint);
+}
+
+inline void TurnTableCamera::MoveOrigin(const glm::vec2& movement)
+{
+	glm::vec3 sideShift = glm::normalize(glm::cross(m_upVector, m_position - m_focusPoint));
+	glm::vec3 upShift = glm::normalize(glm::cross(m_position - m_focusPoint, sideShift));
+	glm::vec3 shift = (upShift * movement.y + sideShift * movement.x);
+	m_focusPoint += shift;
+	m_position += shift;
+}
+
+inline void TurnTableCamera::Zoom(float delta)
+{
+	m_radius += delta;
+	m_radius = glm::clamp(m_radius, 0.1f, 100.f);
+	m_position = m_focusPoint + glm::normalize(m_position - m_focusPoint) * m_radius;
+}
 
 inline void TurnTableCamera::OnMouseClick(MouseButtonEvent& e)
 {
@@ -85,31 +114,20 @@ inline inline void TurnTableCamera::OnMouseMove(MouseMoveEvent& e)
 	
 	if (m_zooming)
 	{
-		m_radius += e.deltaPos.y * p_zoomSensitivity;
-		m_radius = glm::clamp(m_radius, 0.1f, 100.f);
-		m_position = m_focusPoint + glm::normalize(m_position - m_focusPoint) * m_radius;
+		Zoom(e.deltaPos.y * p_zoomSensitivity);
 		e.handled = true;
 		return;
 	}
 
 	if (m_originMoving && m_turning)
 	{
-		glm::vec3 sideShift = glm::normalize(glm::cross(m_upVector, m_position - m_focusPoint));
-		glm::vec3 upShift = glm::normalize(glm::cross(m_position - m_focusPoint, sideShift));
-		glm::vec3 shift = (upShift * (float)e.deltaPos.y + sideShift * (float)-e.deltaPos.x) * p_turnSensitivity;
-		m_focusPoint += shift;
-		m_position += shift;
-
+		MoveOrigin(glm::vec2(-e.deltaPos.x, e.deltaPos.y) * p_turnSensitivity);
 		e.handled = true;
 		return;
 	}
 
 	if (m_turning) {
-
-		auto p = glm::rotate(m_identity, (float)-e.deltaPos.x * p_turnSensitivity, m_upVector);
-		p = glm::rotate(p, (float)e.deltaPos.y * p_turnSensitivity, glm::normalize(glm::cross(m_position - m_focusPoint, m_upVector)));
-		m_position = m_focusPoint + p * (m_position - m_focusPoint);
-
+		Turn(-e.deltaPos.x * p_turnSensitivity, e.deltaPos.y * p_turnSensitivity);
 		e.handled = true;
 		return;
 	}
